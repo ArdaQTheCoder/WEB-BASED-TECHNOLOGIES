@@ -1,0 +1,495 @@
+﻿@{
+    ViewData["Title"] = "Credit Card Verification";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .cc-page {
+        min-height: 100vh;
+        background: #0c0f1a;
+        background-image:
+            radial-gradient(ellipse 80% 60% at 50% -10%, rgba(196, 164, 90, 0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,255,255,0.03) 0%, transparent 50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .cc-container {
+        width: 100%;
+        max-width: 460px;
+        animation: fadeUp 0.7s ease both;
+    }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card preview */
+    .cc-card-preview {
+        background: linear-gradient(135deg, #1a1f35 0%, #2a2040 50%, #1a2535 100%);
+        border: 1px solid rgba(196,164,90,0.25);
+        border-radius: 20px;
+        padding: 28px 30px 24px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .cc-card-preview::before {
+        content: '';
+        position: absolute;
+        top: -60px; right: -60px;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(196,164,90,0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .cc-card-preview::after {
+        content: '';
+        position: absolute;
+        bottom: -40px; left: -20px;
+        width: 140px; height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(100,120,200,0.08) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .cc-chip {
+        width: 36px; height: 28px;
+        background: linear-gradient(135deg, #c4a45a, #e8cc8a, #b8963e);
+        border-radius: 5px;
+        margin-bottom: 20px;
+        position: relative;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .cc-chip::after {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 2px;
+    }
+
+    .cc-card-number-preview {
+        font-family: 'DM Sans', monospace;
+        font-size: 17px;
+        letter-spacing: 0.18em;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 20px;
+        font-weight: 300;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .cc-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .cc-meta-label {
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(196,164,90,0.6);
+        margin-bottom: 3px;
+        font-weight: 500;
+    }
+
+    .cc-meta-value {
+        font-size: 13px;
+        color: rgba(255,255,255,0.85);
+        font-weight: 400;
+        letter-spacing: 0.04em;
+    }
+
+    .cc-card-logo {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+
+    /* Form panel */
+    .cc-panel {
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 36px 32px;
+        backdrop-filter: blur(12px);
+    }
+
+    .cc-header {
+        margin-bottom: 28px;
+    }
+
+    .cc-eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #c4a45a;
+        font-weight: 500;
+        margin-bottom: 6px;
+    }
+
+    .cc-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: #f0ece4;
+        line-height: 1.2;
+    }
+
+    .cc-divider {
+        width: 36px;
+        height: 2px;
+        background: linear-gradient(90deg, #c4a45a, transparent);
+        margin-top: 12px;
+    }
+
+    /* Fields */
+    .cc-field {
+        margin-bottom: 18px;
+        position: relative;
+        animation: fadeUp 0.6s ease both;
+    }
+
+    .cc-field:nth-child(1) { animation-delay: 0.05s; }
+    .cc-field:nth-child(2) { animation-delay: 0.1s; }
+    .cc-field:nth-child(3) { animation-delay: 0.15s; }
+    .cc-field:nth-child(4) { animation-delay: 0.2s; }
+
+    .cc-field label {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196,164,90,0.75);
+        margin-bottom: 7px;
+    }
+
+    .cc-field input {
+        width: 100%;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: #f0ece4;
+        outline: none;
+        transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        -webkit-appearance: none;
+    }
+
+    .cc-field input::placeholder {
+        color: rgba(255,255,255,0.2);
+        font-size: 13px;
+    }
+
+    .cc-field input:focus {
+        border-color: rgba(196,164,90,0.5);
+        background: rgba(255,255,255,0.07);
+        box-shadow: 0 0 0 3px rgba(196,164,90,0.08);
+    }
+
+    .cc-field select {
+        width: 100%;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: #f0ece4;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(196,164,90,0.7)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+    }
+
+    .cc-field select:focus {
+        border-color: rgba(196,164,90,0.5);
+        background-color: rgba(255,255,255,0.07);
+        box-shadow: 0 0 0 3px rgba(196,164,90,0.08);
+    }
+
+    .cc-field select option {
+        background: #1a1f35;
+        color: #f0ece4;
+    }
+
+    .cc-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    /* Submit */
+    .cc-submit {
+        width: 100%;
+        margin-top: 24px;
+        padding: 15px;
+        background: linear-gradient(135deg, #c4a45a 0%, #e8cc8a 50%, #b8963e 100%);
+        border: none;
+        border-radius: 12px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #0c0f1a;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 4px 20px rgba(196,164,90,0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cc-submit::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .cc-submit:hover {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 28px rgba(196,164,90,0.35);
+    }
+
+    .cc-submit:hover::after { opacity: 1; }
+    .cc-submit:active { transform: translateY(0); }
+
+    /* Result */
+    .cc-result {
+        margin-top: 20px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        display: none;
+    }
+
+    .cc-result.show { display: block; }
+
+    .cc-result.success {
+        background: rgba(72, 199, 142, 0.1);
+        border: 1px solid rgba(72,199,142,0.25);
+        color: #48c78e;
+    }
+
+    .cc-result.error {
+        background: rgba(241, 70, 104, 0.1);
+        border: 1px solid rgba(241,70,104,0.25);
+        color: #f14668;
+    }
+
+    .cc-result.neutral {
+        background: rgba(196,164,90,0.08);
+        border: 1px solid rgba(196,164,90,0.2);
+        color: rgba(196,164,90,0.9);
+    }
+
+    .cc-secure {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 18px;
+        font-size: 11px;
+        color: rgba(255,255,255,0.25);
+        letter-spacing: 0.08em;
+    }
+
+    .cc-secure svg { flex-shrink: 0; }
+</style>
+
+<div class="cc-page">
+    <div class="cc-container">
+
+        <!-- Visual card preview -->
+        <div class="cc-card-preview">
+            <div class="cc-chip"></div>
+            <div class="cc-card-number-preview" id="previewNumber">•••• •••• •••• ••••</div>
+            <div class="cc-card-meta">
+                <div>
+                    <div class="cc-meta-label">Card Holder</div>
+                    <div class="cc-meta-value" id="previewOwner">YOUR NAME</div>
+                </div>
+                <div>
+                    <div class="cc-meta-label">Expires</div>
+                    <div class="cc-meta-value" id="previewExp">MM / YY</div>
+                </div>
+                <div class="cc-card-logo">
+                    <img id="cardLogoLive" src="" alt=""
+                         style="display:none; height:38px; object-fit:contain;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Form panel -->
+        <div class="cc-panel">
+            <div class="cc-header">
+                <div class="cc-eyebrow">Payment Verification</div>
+                <div class="cc-title">Card Details</div>
+                <div class="cc-divider"></div>
+            </div>
+
+            <form method="post">
+
+                <div class="cc-field">
+                    <label for="Owner">Cardholder Name</label>
+                    <input id="Owner" name="Owner" placeholder="As it appears on the card" autocomplete="cc-name" />
+                </div>
+
+                <div class="cc-field">
+                    <label for="CardNumber">Card Number</label>
+                    <input id="CardNumber" name="CardNumber" placeholder="•••• •••• •••• ••••" maxlength="19" autocomplete="cc-number" inputmode="numeric" />
+                </div>
+
+                <div class="cc-row">
+                    <div class="cc-field" style="margin-bottom:0">
+                        <label for="ExpMonth">Month</label>
+                        <select id="ExpMonth" name="ExpMonth" autocomplete="cc-exp-month">
+                            <option value="" disabled selected>MM</option>
+                            <option value="1">01 – Jan</option>
+                            <option value="2">02 – Feb</option>
+                            <option value="3">03 – Mar</option>
+                            <option value="4">04 – Apr</option>
+                            <option value="5">05 – May</option>
+                            <option value="6">06 – Jun</option>
+                            <option value="7">07 – Jul</option>
+                            <option value="8">08 – Aug</option>
+                            <option value="9">09 – Sep</option>
+                            <option value="10">10 – Oct</option>
+                            <option value="11">11 – Nov</option>
+                            <option value="12">12 – Dec</option>
+                        </select>
+                    </div>
+                    <div class="cc-field" style="margin-bottom:0">
+                        <label for="ExpYear">Year</label>
+                        <input id="ExpYear" name="ExpYear" placeholder="YY" maxlength="2" autocomplete="cc-exp-year" inputmode="numeric" />
+                    </div>
+                    <div class="cc-field" style="margin-bottom:0">
+                        <label for="CCV">CCV</label>
+                        <input id="CCV" name="CCV" placeholder="•••" maxlength="4" autocomplete="cc-csc" inputmode="numeric" />
+                    </div>
+                </div>
+
+                <button type="submit" class="cc-submit">Confirm &amp; Verify</button>
+
+            </form>
+
+            @if (ViewBag.Result != null)
+            {
+                string resultClass = ViewBag.Result.ToString().Contains("valid") ? "success" : "error";
+                <div class="cc-result @resultClass show">@ViewBag.Result</div>
+            }
+
+            <div class="cc-secure">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                256-bit SSL encrypted · PCI DSS compliant
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const ownerInput    = document.getElementById('Owner');
+    const numberInput   = document.getElementById('CardNumber');
+    const monthInput    = document.getElementById('ExpMonth');
+    const yearInput     = document.getElementById('ExpYear');
+
+    const previewOwner  = document.getElementById('previewOwner');
+    const previewNumber = document.getElementById('previewNumber');
+    const previewExp    = document.getElementById('previewExp');
+    const cardLogoImg   = document.getElementById('cardLogoLive');
+
+    const logoMap = {
+        '34': 'amex.png',
+        '37': 'amex.png',
+        '51': 'mastercard.png',
+        '52': 'mastercard.png',
+        '53': 'mastercard.png',
+        '54': 'mastercard.png',
+        '55': 'mastercard.png',
+        '4':  'visa.png',
+    };
+
+    ownerInput.addEventListener('input', () => {
+        previewOwner.textContent = ownerInput.value.toUpperCase() || 'YOUR NAME';
+    });
+
+    numberInput.addEventListener('input', () => {
+        let raw = numberInput.value.replace(/\D/g, '').slice(0, 16);
+        numberInput.value = raw.replace(/(.{4})/g, '$1 ').trim();
+        let display = raw.padEnd(16, '•');
+        previewNumber.textContent = display.replace(/(.{4})/g, '$1 ').trim();
+
+        // Check 2-digit prefix first (Amex/MC), then 1-digit (Visa)
+        let logoFile = (raw.length >= 2 ? logoMap[raw.substring(0, 2)] : null)
+                    || (raw.length >= 1 ? logoMap[raw.substring(0, 1)] : null);
+
+        if (logoFile) {
+            cardLogoImg.src = '/images/' + logoFile;
+            cardLogoImg.style.display = 'block';
+        } else {
+            cardLogoImg.style.display = 'none';
+        }
+    });
+
+    function updateExp() {
+        const m = monthInput.value || 'MM';
+        const y = yearInput.value || 'YY';
+        previewExp.textContent = m + ' / ' + y;
+    }
+
+    monthInput.addEventListener('change', () => {
+        updateExp();
+    });
+
+    yearInput.addEventListener('input', () => {
+        yearInput.value = yearInput.value.replace(/\D/g, '');
+        updateExp();
+    });
+
+    // Restore logo after form submit if server returned a card type
+    @if (ViewBag.CardType != null)
+    {
+        var logoFile = ViewBag.CardType == "Visa"       ? "visa.png"
+                     : ViewBag.CardType == "MasterCard" ? "mastercard.png"
+                     : ViewBag.CardType == "Amex"       ? "amex.png"
+                     : null;
+        if (logoFile != null)
+        {
+            <text>
+            document.addEventListener('DOMContentLoaded', () => {
+                cardLogoImg.src = '/images/@logoFile';
+                cardLogoImg.style.display = 'block';
+            });
+            </text>
+        }
+    }
+</script>

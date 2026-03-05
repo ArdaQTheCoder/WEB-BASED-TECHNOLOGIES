@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — SecurePay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #0c0f1a;
+            font-family: 'DM Sans', sans-serif;
+            color: #f0ece4;
+        }
+
+        /* ── Navbar ── */
+        .site-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            height: 64px;
+            background: rgba(12, 15, 26, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(196, 164, 90, 0.12);
+        }
+
+        .site-nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .site-nav-brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #c4a45a, #e8cc8a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .site-nav-brand-icon svg {
+            width: 16px; height: 16px;
+            stroke: #0c0f1a;
+        }
+
+        .site-nav-brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #f0ece4;
+            letter-spacing: 0.02em;
+        }
+
+        .site-nav-brand-name span {
+            color: #c4a45a;
+        }
+
+        .site-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+            margin: 0; padding: 0;
+        }
+
+        .site-nav-links a {
+            display: block;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(240, 236, 228, 0.55);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .site-nav-links a:hover {
+            color: #f0ece4;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .site-nav-links a.active {
+            color: #c4a45a;
+        }
+
+        .site-nav-badge {
+            padding: 6px 18px;
+            background: linear-gradient(135deg, #c4a45a, #e8cc8a);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #0c0f1a;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .site-nav-badge:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+            color: #0c0f1a;
+        }
+
+        /* ── Page body offset for fixed nav ── */
+        .site-body {
+            padding-top: 64px;
+            min-height: 100vh;
+            background: #0c0f1a;
+            background-image:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,164,90,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 90% 90%, rgba(100,120,200,0.04) 0%, transparent 50%);
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 28px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .site-footer-left {
+            font-size: 12px;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.06em;
+        }
+
+        .site-footer-left span {
+            color: rgba(196,164,90,0.5);
+        }
+
+        .site-footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            margin: 0; padding: 0;
+        }
+
+        .site-footer-links a {
+            font-size: 12px;
+            color: rgba(255,255,255,0.2);
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            transition: color 0.2s;
+        }
+
+        .site-footer-links a:hover {
+            color: rgba(196,164,90,0.6);
+        }
+
+        /* ── Remove Bootstrap body bg override ── */
+        body { background-color: #0c0f1a !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="site-nav">
+        <a class="site-nav-brand" asp-controller="Home" asp-action="Index">
+            <div class="site-nav-brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="3"/>
+                    <path d="M2 10h20"/>
+                </svg>
+            </div>
+            <span class="site-nav-brand-name">Secure<span>Pay</span></span>
+        </a>
+
+        <ul class="site-nav-links">
+            <li><a asp-controller="Home" asp-action="Index">Verify Card</a></li>
+            <li><a asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+        </ul>
+
+        <div class="site-nav-badge">
+            PCI DSS Compliant
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="site-body">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="site-footer-left">
+            © @DateTime.Now.Year <span>SecurePay</span> · All rights reserved
+        </div>
+        <ul class="site-footer-links">
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Security</a></li>
+        </ul>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
